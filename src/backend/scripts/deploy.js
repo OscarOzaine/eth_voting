@@ -6,10 +6,13 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   // deploy contracts here:
-  
-  
-  // For each contract, pass the deployed contract and name to this function to save a copy of the contract ABI and address to the front end.
-  saveFrontendFiles();
+  const SimpleStorage = await ethers.getContractFactory("SimpleStorage");
+
+  // deploy contracts
+  const simpleStorage = await SimpleStorage.deploy();
+
+  // Save copies of each contracts abi and address to the frontend.
+  saveFrontendFiles(simpleStorage , "SimpleStorage");
 }
 
 function saveFrontendFiles(contract, name) {
