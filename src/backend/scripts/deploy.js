@@ -11,11 +11,7 @@ async function main() {
 
   // deploy contracts
   const simpleStorage = await SimpleStorage.deploy();
-  console.log('simpleStorage');
-  console.log(simpleStorage);
-  const coin = await Coin.deploy();
-  console.log('coin');
-  console.log(coin);
+  const coin = await Coin.deploy('fooCoin');
 
   // Save copies of each contracts abi and address to the frontend.
   saveFrontendFiles(simpleStorage , "SimpleStorage");
