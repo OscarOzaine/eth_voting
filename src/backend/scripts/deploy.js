@@ -7,12 +7,19 @@ async function main() {
 
   // deploy contracts here:
   const SimpleStorage = await ethers.getContractFactory("SimpleStorage");
+  const Coin = await ethers.getContractFactory("Coin");
 
   // deploy contracts
   const simpleStorage = await SimpleStorage.deploy();
+  console.log('simpleStorage');
+  console.log(simpleStorage);
+  const coin = await Coin.deploy();
+  console.log('coin');
+  console.log(coin);
 
   // Save copies of each contracts abi and address to the frontend.
   saveFrontendFiles(simpleStorage , "SimpleStorage");
+  saveFrontendFiles(coin , "Coin");
 }
 
 function saveFrontendFiles(contract, name) {
