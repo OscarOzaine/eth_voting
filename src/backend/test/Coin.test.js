@@ -1,8 +1,11 @@
 const { expect } = require("chai"); 
+const { ethers } = require("hardhat");
 
 describe("Coin", function () {
     let Coin;
     let coin;
+    let TokenCreator;
+    let tokenCreator;
     let deployer;
     let addr1;
     let addr2;
@@ -11,15 +14,17 @@ describe("Coin", function () {
     beforeEach(async function () {
         // Get the ContractFactories and Signers here.
         Coin = await ethers.getContractFactory("Coin");
+        TokenCreator = await ethers.getContractFactory("TokenCreator");
         [deployer, addr1, addr2, ...addrs] = await ethers.getSigners();
 
         // To deploy our contracts
+        tokenCreator = await TokenCreator.deploy();
         coin = await Coin.deploy('coin');
     });
   
     it("Owner should be able to mint coins", async function () {
         await coin.connect(deployer).mint(addr1.address, 10);
-        expect(await coin.minter()).to.equal(deployer.address);
+        expect(await coin.owner()).to.equal(deployer.address);
         expect(await coin.name()).to.equal('coin');
         expect(await coin.balances(addr1.address)).to.equal(10);
     });
@@ -36,7 +41,7 @@ describe("Coin", function () {
         ).to.be.revertedWith("Only numbers below 10001");
     });
 
-    it("Coin owner should be able to send coins", async function () {
+    it("Owner should be able to send coins", async function () {
         await coin.connect(deployer).mint(addr1.address, 100)
 
         await expect(coin.connect(addr1).send(addr2.address, 10))
@@ -48,5 +53,46 @@ describe("Coin", function () {
             );
 
         expect(await coin.balances(addr2.address)).to.equal(10);
+    });
+
+    it("Owner should be able to send coins", async function () {
+        await coin.connect(deployer).mint(addr1.address, 100)
+
+        await expect(coin.connect(addr1).send(addr2.address, 10))
+            .to.emit(coin, "Sent")
+            .withArgs(
+                addr1.address,
+                addr2.address,
+                10,
+            );
+
+        expect(await coin.balances(addr2.address)).to.equal(10);
+    });
+
+    it("Owner can change coin name", async function () {
+        await coin.connect(deployer).changeName('foo-coin');
+        expect(await coin.name()).to.equal('foo-coin');
+    });
+
+    it("Non-Owner can not change coin name", async function () {
+        await expect(
+            coin.connect(addr1).changeName('coin-name')
+        ).to.be.revertedWith("Only owners can change coin name");
+    });
+
+    it("Token creator can create coins", async function () {
+        const newCoin = await tokenCreator.connect(deployer).createCoin('foo-coin');
+        // coin = await ethers.getContractAt(
+        //     "Coin",
+        //     newCoin
+        // )
+        // coin = await ethers.getContractAt(newCoin);
+        console.log(await newCoin.name());
+        // expect(newCoin).has('address');
+    });
+
+    it("Token creator can change coin name", async function () {
+        // await coin.connect(deployer).changeName('foo-coin');
+        // expect(await coin.name()).to.equal('foo-coin');
     });
 });
