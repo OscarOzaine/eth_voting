@@ -13,8 +13,8 @@ describe("Coin", function () {
 
     beforeEach(async function () {
         // Get the ContractFactories and Signers here.
-        Coin = await ethers.getContractFactory("Coin");
         TokenCreator = await ethers.getContractFactory("TokenCreator");
+        Coin = await ethers.getContractFactory("Coin");
         [deployer, addr1, addr2, ...addrs] = await ethers.getSigners();
 
         // To deploy our contracts
@@ -82,17 +82,15 @@ describe("Coin", function () {
 
     it("Token creator can create coins", async function () {
         const newCoin = await tokenCreator.connect(deployer).createCoin('foo-coin');
-        // coin = await ethers.getContractAt(
-        //     "Coin",
-        //     newCoin
-        // )
-        // coin = await ethers.getContractAt(newCoin);
-        console.log(await newCoin.name());
-        // expect(newCoin).has('address');
+        expect(newCoin.hash).to.be.string;
     });
 
     it("Token creator can change coin name", async function () {
-        // await coin.connect(deployer).changeName('foo-coin');
-        // expect(await coin.name()).to.equal('foo-coin');
+        // @TODO figure this out, how do we test ?
+        const changedCoin = await tokenCreator.connect(deployer).changeName(
+            coin.address,
+            'foo-coin'
+        );
+        expect(changedCoin.hash).to.be.string;
     });
 });
