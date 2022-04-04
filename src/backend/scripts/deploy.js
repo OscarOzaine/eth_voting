@@ -6,16 +6,13 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   // deploy contracts here:
-  const SimpleStorage = await ethers.getContractFactory("SimpleStorage");
-  const Coin = await ethers.getContractFactory("Coin");
+  const Election = await ethers.getContractFactory("Election");
 
   // deploy contracts
-  const simpleStorage = await SimpleStorage.deploy();
-  const coin = await Coin.deploy('fooCoin');
+  const election = await Election.deploy('election 1');
 
   // Save copies of each contracts abi and address to the frontend.
-  saveFrontendFiles(simpleStorage , "SimpleStorage");
-  saveFrontendFiles(coin , "Coin");
+  saveFrontendFiles(election , "Election");
 }
 
 function saveFrontendFiles(contract, name) {
