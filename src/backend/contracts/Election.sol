@@ -5,6 +5,13 @@ contract Election {
     address public owner;
     string public name;
 
+    uint public votersCount;
+    uint public candidatesCount;
+
+    mapping(address => bool) public voters;
+    
+    mapping(uint => Candidate) public candidates;
+
     struct Candidate {
         uint id;
         string name;
@@ -15,18 +22,6 @@ contract Election {
         owner = msg.sender;
         name = _name;
     }
-
-    // Store accounts that have voted
-    mapping(address => bool) public voters;
-
-    // Store Voters Count
-    uint public votersCount;
-
-    // Fetch Candidate
-    mapping(uint => Candidate) public candidates;
-
-    // Store Candidates Count
-    uint public candidatesCount;
 
     event votedEvent (
         uint indexed _candidateId
