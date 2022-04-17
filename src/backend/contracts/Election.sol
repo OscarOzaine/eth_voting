@@ -19,6 +19,9 @@ contract Election {
     // Store accounts that have voted
     mapping(address => bool) public voters;
 
+    // Store Voters Count
+    uint public votersCount;
+
     // Fetch Candidate
     mapping(uint => Candidate) public candidates;
 
@@ -38,16 +41,18 @@ contract Election {
 
     function vote (uint _candidateId) public {
         // require that they haven't voted before
-        require(!voters[msg.sender]);
+        require(!voters[msg.sender], "Address can only vote once");
 
         // require a valid candidate
-        require(_candidateId > 0 && _candidateId <= candidatesCount);
+        require(_candidateId > 0 && _candidateId <= candidatesCount, "Only vote on existing candidates");
 
         // record that voter has voted
         voters[msg.sender] = true;
 
         // update candidate vote Count
         candidates[_candidateId].voteCount ++;
+
+        votersCount++;
 
         emit votedEvent(_candidateId);
     }
